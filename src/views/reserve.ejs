@@ -1,10 +1,9 @@
 <%- include('./partials/header.ejs') %>
-  <div class="container-fluid w-100  d-flex  p-3"><a href="/" class="btn btn-light  btn-outline-dark homeButton"><i
-        class="fa-solid fa-house fa-2x"></i></a></div>
+  <a href="/" class="btn btn-light  btn-outline-dark homeButton"><i class="fa-solid fa-house fa-2x"></i></a>
   <div class="counterWrapper d-none">
     <span id="counter">0</span>
   </div>
-  <div class="quizPage section container-fluid max-width-1440  w-100 bg-light">
+  <div class="quizPage section container-fluid max-width-1440 vh-100   w-100 bg-light">
     <h1>Enjoy the quiz!</h1>
     <p>Chose a subject, exam year, and exam type</p>
     <form action="/quizQuestion" class="container quizForm gap-3 flex-wrap" method="get">
@@ -15,11 +14,19 @@
         </select>
       </div>
 
+      <div class="yearAvailableWrapper">
+        <div div class="yearsAvailable">
+          <select class="form-select" aria-label="Default select example" required>
+            <option selected>Years available</option>
+          </select>
+        </div>
+      </div>
+
       <div class="examTypes w-100 text-center my-2">
         <input type="radio" class="btn-check" name="options-base" value="utme" id="utme" autocomplete="off" required>
-        <label class="btn " for="utme">utme</label>
+        <label class="btn" for="utme">utme</label>
 
-        <input type="radio" class="btn-check " name="options-base" value="wassce" id="wassce" autocomplete="off"
+        <input type="radio" class="btn-check" name="options-base" value="wassce" id="wassce" autocomplete="off"
           required>
         <label class="btn" for="wassce">wassce</label>
 
@@ -34,12 +41,10 @@
     </form>
 
 
-    <div class="container-fluid questionWrapper my-5 px-0"></div>
+    <div class="container-fluid questionWrapper mt-3 mb-5"></div>
 
-    <div class="container-fluid w-100 p-0">
+    <div class="container-fluid w-100 ">
       <button type="button" class="btn btn-light btn-outline-dark showAnswerButton">Show Answer</button>
-      <button type="button" class="btn btn-light btn-outline-dark hideAnswerButton">Hide Answer</button>
-
     </div>
   </div>
   <%- include('./partials/footer.ejs') %>

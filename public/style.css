@@ -1,11 +1,21 @@
 /* public/styles.css */
-
+body {
+  font-family: "Poppins", serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
 
 .max-width-1440 {
   max-width: 1440px;
   margin: auto;
   /* Maximum width */
+}
+
+.quizPage {
+  min-height: 100vh;
+  height: 100%;
+  padding: 80px 20px
 }
 
 .quizPage,
@@ -23,14 +33,7 @@
 
 
 
-.homeButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  left: 30px;
-  top: 30px;
-}
+
 
 .counterWrapper {
   position: absolute;
@@ -54,6 +57,7 @@
 }
 
 .showAnswerButton,
+.hideAnswerButton,
 .yearAvailableWrapper,
 .examTypes,
 .quizButton {
@@ -63,6 +67,13 @@
 .yearAvailableWrapper.active,
 .examTypes.active,
 .quizButton.active,
-.showAnswerButton.active {
+.showAnswerButton.active,
+.hideAnswerButton.active {
   display: block;
+}
+
+.quizForm .listOfSubjects select,
+.quizForm .examTypes,
+.quizForm .yearsAvailable select {
+  text-transform: capitalize;
 }

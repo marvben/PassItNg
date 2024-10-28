@@ -7,7 +7,7 @@ const axios = require('axios');
 
 // Get a quizQuestion
 router.get('/quizQuestion', async (req, res) => {
-  const url = `https://questions.aloc.com.ng/api/v2/q?subject=${req.query.subject}&year=${req.query.year}&type=${req.query.type}`;
+  const url = `https://questions.aloc.com.ng/api/v2/q?subject=${req.query.subject}&type=${req.query.type}`;
 
   try {
     const response = await axios.get(url, {

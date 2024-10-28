@@ -1,4 +1,5 @@
 // Select the HTML elements
+const quizPage = document.querySelector('.quizPage');
 const quizForm = document.querySelector('form.quizForm');
 const listOfSubjectsElement = document.querySelector('.listOfSubjects');
 const yearAvailableWrapper = document.querySelector('.yearAvailableWrapper');
@@ -12,15 +13,25 @@ const counterDisplay = document.getElementById('counter');
 const questionWrapper = document.querySelector('.questionWrapper');
 const quizButton = document.querySelector('.quizButton');
 const showAnswerButton = document.querySelector('.showAnswerButton');
+const hideAnswerButton = document.querySelector('.hideAnswerButton');
 
 document.addEventListener('DOMContentLoaded', async function (e) {
   availableSubject();
 });
 
 showAnswerButton.addEventListener('click', showAnswer);
+hideAnswerButton.addEventListener('click', hideAnswer);
 
 function showAnswer() {
   document.querySelector('.answer').classList.remove('d-none');
+  showAnswerButton.classList.remove('active');
+  hideAnswerButton.classList.add('active');
+}
+
+function hideAnswer() {
+  document.querySelector('.answer').classList.add('d-none');
+  showAnswerButton.classList.add('active');
+  hideAnswerButton.classList.remove('active');
 }
 // Initialize the counter value
 let intervalId = null;
@@ -48,24 +59,28 @@ function endTimer() {
   counterDisplay.textContent = 0;
 }
 
-subjectSelected.addEventListener('change', async (event) => {
-  if (yearAvailableWrapper) {
+if (!quizPage) {
+  subjectSelected.addEventListener('change', async (event) => {
     yearAvailableWrapper.classList.remove('active');
     resetValues();
     await yearsAvailableForASubject(event.target.value);
     yearAvailableWrapper.classList.add('active');
-  }
-});
+  });
 
-yearSelected.addEventListener('change', async (event) => {
-  const valueType = Number(event.target.value);
-  if (valueType) {
+  yearSelected.addEventListener('change', async (event) => {
+    const valueType = Number(event.target.value);
+    if (valueType) {
+      examTypes.classList.add('active');
+    } else {
+      resetValues();
+    }
+  });
+} else {
+  subjectSelected.addEventListener('change', async (event) => {
+    // resetValues();
     examTypes.classList.add('active');
-  } else {
-    resetValues();
-  }
-});
-
+  });
+}
 examTypes.querySelectorAll('input').forEach((examType) => {
   examType.addEventListener('change', (event) => {
     if (!quizButton.classList.contains('active')) {
@@ -79,6 +94,7 @@ quizForm.addEventListener('submit', async (event) => {
   try {
     await getAQuestion(formFields());
     showAnswerButton.classList.add('active');
+    hideAnswerButton.classList.remove('active');
   } catch (error) {
     console.error('Error fetching question:', error);
   }
@@ -90,16 +106,24 @@ quizForm.addEventListener('submit', async (event) => {
 function formFields() {
   // Get the selected subject value
   const subjectName = subjectSelected.value;
-  const questionYear = yearSelected.value;
   const examType = document.querySelector('.examTypes input:checked').value;
   const numberOfQuestions = 10;
 
-  return {
-    subjectName,
-    questionYear,
-    examType,
-    numberOfQuestions,
-  };
+  if (!quizPage) {
+    const questionYear = yearSelected.value;
+    return {
+      subjectName,
+      questionYear,
+      examType,
+      numberOfQuestions,
+    };
+  } else {
+    return {
+      subjectName,
+      examType,
+      numberOfQuestions,
+    };
+  }
 }
 
 async function yearsAvailableForASubject(subjectName) {
@@ -137,7 +161,6 @@ async function availableSubject() {
     const response = await axios.get(url); // Rename to 'response' for clarity
     const requestStatus = response.data.status;
     const subjectNames = response.data.data;
-
     if (requestStatus === 200) {
       for (let key in subjectNames) {
         let subjectName = subjectNames[key];
@@ -155,8 +178,6 @@ async function availableSubject() {
 
         listOfSubjectsElement.querySelector('select').appendChild(node);
       }
-    } else {
-      listOfSubjectsElement.remove();
     }
   } catch (error) {
     console.log(error);
@@ -165,7 +186,11 @@ async function availableSubject() {
 
 //Getting a single question
 async function getAQuestion({ subjectName, questionYear, examType }) {
-  const url = `/quizQuestion?subject=${subjectName}&year=${questionYear}&type=${examType}`;
+  let url = `/quizQuestion?subject=${subjectName}&year=${questionYear}&type=${examType}`;
+  if (!quizPage) {
+    url = `/quizQuestion?subject=${subjectName}&type=${examType}`;
+  }
+
   const response = await axios.get(url);
   questionWrapper.innerHTML = questionTemplate(response.data);
 }
@@ -197,10 +222,11 @@ const questionTemplate = (questionObj) => {
 
   return ` 
       <div class="card-body d-flex flex-column justify-content-between align-items-start">
-          <div class="card-title m-2 text-dark question">
-              ${question}
+          <div class="card-title m-2 text-dark question fw-medium fs-5 p-0 mx-0 mb-3">
+            ${question} 
+            <span class="font-italic text-info font-weight-bold text-uppercase fs-6">(${examtype}, ${examyear})</span>
           </div>
-          <ul class="options">
+          <ul class="options list-unstyled">
             ${option.a ? `<li>A. ${option.a}</li>` : ''}
             ${option.b ? `<li>B. ${option.b}</li>` : ''}
             ${option.c ? `<li>C. ${option.c}</li>` : ''}
@@ -215,11 +241,18 @@ const questionTemplate = (questionObj) => {
                ? `<div> <img src="${image}" class="" alt="${examtype} ${examyear}"> </div>`
                : ''
            }
+           <div class="d-none answer mt-4">
+            <h2 class=" answerOption">Answer: ${answer}</h2>
+             ${
+               solution
+                 ? `<div class="solution">Solution: ${solution}</div>`
+                 : ''
+             }
 
-          <h2 class="d-none answer">Answer: ${answer}</h2>
-
-          ${solution ? `<div class="solution">Solution: ${solution}</div>` : ''}
+           </div>
           
+
+
           ${
             questionNub
               ? `<div class="questionNub">QuestionNub: ${questionNub}</div>`
