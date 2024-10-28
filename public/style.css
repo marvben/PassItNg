@@ -1,0 +1,63 @@
+/* public/styles.css */
+
+
+
+.max-width-1440 {
+  max-width: 1440px;
+  margin: auto;
+  /* Maximum width */
+}
+
+.quizPage,
+.quizForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.quizForm {
+  flex-direction: row;
+}
+
+.showAnswerButton {
+  display: none;
+  position: absolute;
+  left: 30px;
+  bottom: 30px;
+}
+
+.counterWrapper {
+  position: absolute;
+  right: 30px;
+  top: 30px;
+  height: 80px;
+  width: 80px;
+  border: 3px solid darkcyan;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.counterWrapper span {
+  font-size: 40px;
+  font-weight: bold;
+  color: darkcyan;
+  padding: 0;
+  margin: 0;
+}
+
+.yearAvailableWrapper,
+.examTypes,
+.quizButton {
+  display: none;
+}
+
+.yearAvailableWrapper.active,
+.examTypes.active,
+.quizButton.active,
+.showAnswerButton.active {
+  display: block;
+}
