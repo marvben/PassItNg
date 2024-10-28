@@ -1,9 +1,9 @@
 <%- include('./partials/header.ejs') %>
   <a href="/" class="btn btn-light  btn-outline-dark homeButton"><i class="fa-solid fa-house fa-2x"></i></a>
-  <div class="counterWrapper">
+  <div class="counterWrapper d-none">
     <span id="counter">0</span>
   </div>
-  <div class="quizPage section container-fluid max-width-1440  bg-light">
+  <div class="quizPage section container-fluid max-width-1440 vh-100   w-100 bg-light">
     <h1>Enjoy the quiz!</h1>
     <p>Chose a subject, exam year, and exam type</p>
     <form action="/quizQuestion" class="container quizForm gap-3 flex-wrap" method="get">
@@ -22,7 +22,7 @@
         </div>
       </div>
 
-      <div class="examTypes w-100 text-center">
+      <div class="examTypes w-100 text-center my-2">
         <input type="radio" class="btn-check" name="options-base" value="utme" id="utme" autocomplete="off" required>
         <label class="btn" for="utme">utme</label>
 
@@ -36,13 +36,15 @@
       </div>
 
 
-      <button type="submit" class="btn btn-success  border-success quizButton">Start Quiz</button>
+      <button type="submit" class="btn btn-success  border-success quizButton">Submit</button>
 
     </form>
 
 
-    <div class="container-fluid questionWrapper"></div>
+    <div class="container-fluid questionWrapper mt-3 mb-5"></div>
 
-    <button type="button" class="btn btn-light btn-outline-dark showAnswerButton">Show Answer</button>
+    <div class="container-fluid w-100 ">
+      <button type="button" class="btn btn-light btn-outline-dark showAnswerButton">Show Answer</button>
+    </div>
   </div>
   <%- include('./partials/footer.ejs') %>

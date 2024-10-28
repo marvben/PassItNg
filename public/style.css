@@ -21,12 +21,7 @@
   flex-direction: row;
 }
 
-.showAnswerButton {
-  display: none;
-  position: absolute;
-  left: 30px;
-  bottom: 30px;
-}
+
 
 .homeButton {
   display: flex;
@@ -41,8 +36,8 @@
   position: absolute;
   right: 30px;
   top: 30px;
-  height: 80px;
-  width: 80px;
+  height: 50px;
+  width: 50px;
   border: 3px solid darkcyan;
   border-radius: 50%;
   display: flex;
@@ -51,13 +46,14 @@
 }
 
 .counterWrapper span {
-  font-size: 40px;
+  font-size: 30px;
   font-weight: bold;
   color: darkcyan;
   padding: 0;
   margin: 0;
 }
 
+.showAnswerButton,
 .yearAvailableWrapper,
 .examTypes,
 .quizButton {
