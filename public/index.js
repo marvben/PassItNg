@@ -187,7 +187,7 @@ async function availableSubject() {
 //Getting a single question
 async function getAQuestion({ subjectName, questionYear, examType }) {
   let url = `/quizQuestion?subject=${subjectName}&year=${questionYear}&type=${examType}`;
-  if (!quizPage) {
+  if (quizPage) {
     url = `/quizQuestion?subject=${subjectName}&type=${examType}`;
   }
 
@@ -238,11 +238,11 @@ const questionTemplate = (questionObj) => {
 
            ${
              image
-               ? `<div> <img src="${image}" class="" alt="${examtype} ${examyear}"> </div>`
+               ? `<div class="w-100"> <img src="${image}" class="img-fluid" alt="${examtype} ${examyear}"> </div>`
                : ''
            }
            <div class="d-none answer mt-4">
-            <h2 class=" answerOption">Answer: ${answer}</h2>
+            <h2 class=" answerOption text-uppercase">Answer: ${answer}</h2>
              ${
                solution
                  ? `<div class="solution">Solution: ${solution}</div>`
