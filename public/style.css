@@ -28,6 +28,15 @@
   bottom: 30px;
 }
 
+.homeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 30px;
+  top: 30px;
+}
+
 .counterWrapper {
   position: absolute;
   right: 30px;
