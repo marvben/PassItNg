@@ -1,17 +1,46 @@
 <%- include('./partials/header.ejs') %>
-  <!-- Error 404 Template 1 - Bootstrap Brain Component -->
-  <section class="py-3 py-md-5 min-vh-100 d-flex justify-content-center align-items-center">
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <div class="text-center">
-            <h2 class="d-flex justify-content-center align-items-center gap-2 mb-4">
-              Coming Soon!</h2>
+  <div class="container-fluid w-100  d-flex  p-3"><a href="/" class="btn btn-light  btn-outline-dark homeButton"><i
+        class="fa-solid fa-house fa-2x"></i></a></div>
+  <div class="counterWrapper d-none">
+    <span id="counter">0</span>
+  </div>
+  <div class="practicePage section container-fluid max-width-1440  w-100 bg-light">
+    <h1>Enjoy the practice!</h1>
+    <p>Chose a subject, exam year, and exam type</p>
+    <form action="/practiceQuestion" class="container practiceForm gap-3 flex-wrap" method="get">
 
-            <a class="btn bsb-btn-5xl btn-dark rounded-pill px-5 fs-6 m-0" href="/" role="button">Back to Home</a>
-          </div>
-        </div>
+      <div div class="listOfSubjects">
+        <select class="form-select" aria-label="Default select example" required>
+          <option selected>Subject available</option>
+        </select>
       </div>
+
+      <div class="examTypes w-100 text-center my-2">
+        <input type="radio" class="btn-check" name="options-base" value="utme" id="utme" autocomplete="off" required>
+        <label class="btn " for="utme">utme</label>
+
+        <input type="radio" class="btn-check " name="options-base" value="wassce" id="wassce" autocomplete="off"
+          required>
+        <label class="btn" for="wassce">wassce</label>
+
+        <input type="radio" class="btn-check" name="options-base" value="post-utme" id="postUtme" autocomplete="off"
+          required>
+        <label class="btn" for="postUtme">post-utme </label>
+      </div>
+
+
+      <button type="submit" class="btn btn-success  border-success practiceButton">Get Your Question</button>
+      <button type="submit" class="btn btn-success  border-success nextQuestionButton">Next Question</button>
+
+    </form>
+
+
+    <div class="container-fluid questionWrapper my-5 px-0"></div>
+
+    <div class="container-fluid w-100 p-0">
+      <button type="button" class="btn btn-light btn-outline-dark showAnswerButton">Show Answer</button>
+      <button type="button" class="btn btn-light btn-outline-dark hideAnswerButton">Hide Answer</button>
+
     </div>
-  </section>
+  </div>
   <%- include('./partials/footer.ejs') %>

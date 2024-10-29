@@ -12,14 +12,14 @@ body {
   /* Maximum width */
 }
 
-.quizPage {
+.practicePage {
   min-height: 100vh;
   height: 100%;
   padding: 80px 20px
 }
 
-.quizPage,
-.quizForm {
+.practicePage,
+.practiceForm {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -27,7 +27,7 @@ body {
 
 }
 
-.quizForm {
+.practiceForm {
   flex-direction: row;
 }
 
@@ -57,24 +57,26 @@ body {
   font-size: 30px;
 }
 
+.nextQuestionButton,
 .showAnswerButton,
 .hideAnswerButton,
 .yearAvailableWrapper,
 .examTypes,
-.quizButton {
+.practiceButton {
   display: none;
 }
 
 .yearAvailableWrapper.active,
 .examTypes.active,
-.quizButton.active,
+.practiceButton.active,
+.nextQuestionButton.active,
 .showAnswerButton.active,
 .hideAnswerButton.active {
   display: block;
 }
 
-.quizForm .listOfSubjects select,
-.quizForm .examTypes,
-.quizForm .yearsAvailable select {
+.practiceForm .listOfSubjects select,
+.practiceForm .examTypes,
+.practiceForm .yearsAvailable select {
   text-transform: capitalize;
 }

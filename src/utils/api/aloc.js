@@ -5,8 +5,8 @@ require('dotenv').config({
 const router = require('express').Router();
 const axios = require('axios');
 
-// Get a quizQuestion
-router.get('/quizQuestion', async (req, res) => {
+// Get a practiceQuestion
+router.get('/practiceQuestion', async (req, res) => {
   const url = `https://questions.aloc.com.ng/api/v2/q?subject=${req.query.subject}&type=${req.query.type}`;
 
   try {

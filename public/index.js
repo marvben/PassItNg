@@ -1,6 +1,6 @@
 // Select the HTML elements
-const quizPage = document.querySelector('.quizPage');
-const quizForm = document.querySelector('form.quizForm');
+const practicePage = document.querySelector('.practicePage');
+const practiceForm = document.querySelector('form.practiceForm');
 const listOfSubjectsElement = document.querySelector('.listOfSubjects');
 const yearAvailableWrapper = document.querySelector('.yearAvailableWrapper');
 const listOfYearsElement = document.querySelector(
@@ -11,7 +11,8 @@ const yearSelected = document.querySelector('.yearsAvailable select');
 const examTypes = document.querySelector('.examTypes');
 const counterDisplay = document.getElementById('counter');
 const questionWrapper = document.querySelector('.questionWrapper');
-const quizButton = document.querySelector('.quizButton');
+const practiceButton = document.querySelector('.practiceButton');
+const nextQuestionButton = document.querySelector('.nextQuestionButton');
 const showAnswerButton = document.querySelector('.showAnswerButton');
 const hideAnswerButton = document.querySelector('.hideAnswerButton');
 
@@ -59,7 +60,7 @@ function endTimer() {
   counterDisplay.textContent = 0;
 }
 
-if (!quizPage) {
+if (!practicePage) {
   subjectSelected.addEventListener('change', async (event) => {
     yearAvailableWrapper.classList.remove('active');
     resetValues();
@@ -81,18 +82,27 @@ if (!quizPage) {
     examTypes.classList.add('active');
   });
 }
+
+let selectedExamType = '';
+
 examTypes.querySelectorAll('input').forEach((examType) => {
   examType.addEventListener('change', (event) => {
-    if (!quizButton.classList.contains('active')) {
-      quizButton.classList.add('active');
+    selectedExamType = event.target.value;
+
+    if (!practiceButton.classList.contains('active')) {
+      practiceButton.classList.add('active');
+      nextQuestionButton.classList.remove('active');
     }
   });
 });
 
-quizForm.addEventListener('submit', async (event) => {
+practiceForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   try {
     await getAQuestion(formFields());
+    practiceButton.classList.remove('active');
+    nextQuestionButton.classList.add('active');
+
     showAnswerButton.classList.add('active');
     hideAnswerButton.classList.remove('active');
   } catch (error) {
@@ -106,10 +116,10 @@ quizForm.addEventListener('submit', async (event) => {
 function formFields() {
   // Get the selected subject value
   const subjectName = subjectSelected.value;
-  const examType = document.querySelector('.examTypes input:checked').value;
+  const examType = selectedExamType;
   const numberOfQuestions = 10;
 
-  if (!quizPage) {
+  if (!practicePage) {
     const questionYear = yearSelected.value;
     return {
       subjectName,
@@ -184,13 +194,16 @@ async function availableSubject() {
   }
 }
 
-//Getting a single question
+//Getting a single question for practice
 async function getAQuestion({ subjectName, questionYear, examType }) {
-  let url = `/quizQuestion?subject=${subjectName}&year=${questionYear}&type=${examType}`;
-  if (quizPage) {
-    url = `/quizQuestion?subject=${subjectName}&type=${examType}`;
-  }
+  let url = `/practiceQuestion?subject=${subjectName}&type=${examType}`;
+  const response = await axios.get(url);
+  questionWrapper.innerHTML = questionTemplate(response.data);
+}
 
+//Getting many questions for quiz
+async function getManyQuestion({ subjectName, questionYear, examType }) {
+  let url = `/practiceQuestion?subject=${subjectName}&year=${questionYear}&type=${examType}`;
   const response = await axios.get(url);
   questionWrapper.innerHTML = questionTemplate(response.data);
 }
@@ -198,7 +211,8 @@ async function getAQuestion({ subjectName, questionYear, examType }) {
 function resetValues() {
   //yearAvailableWrapper.classList.remove('active');
   examTypes.classList.remove('active');
-  quizButton.classList.remove('active');
+  practiceButton.classList.remove('active');
+  nextQuestionButton.classList.remove('active');
   questionWrapper.innerHTML = '';
 }
 
@@ -272,22 +286,22 @@ const questionTemplate = (questionObj) => {
 
 // const examType = document.querySelector('.examType');
 // const questionsList = document.querySelector('.questionsList');
-// const takeQuizButton = document.querySelector('.takeQuiz');
+// const takepracticeButton = document.querySelector('.takepractice');
 // const fullQuestionsButton = document.querySelector('.fullQuestionsButton');
 // const countryRoot = document.querySelector('.countryRoot');
 // const categoryRoot = document.querySelector('.categoryRoot');
 // const root = document.querySelector('.newsRoot');
 // const loadingSpinner = document.querySelector('.loadingSpinner');
 
-// takeQuizButton.addEventListener('click', async () => {
-//   await getQuizQuestion();
+// takepracticeButton.addEventListener('click', async () => {
+//   await getpracticeQuestion();
 // });
 
 // fullQuestionsButton.addEventListener('click', async () => {
 //   await getFullQuestions();
 // });
 
-// async function getQuizQuestion() {
+// async function getpracticeQuestion() {
 //   examType.innerHTML = `<div class="d-flex align-items-center">
 //     <strong>Loading...</strong>
 //     <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
