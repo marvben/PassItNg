@@ -330,7 +330,7 @@ const questionTemplate = (questionObj) => {
                  ? `<div class="solution">Solution: ${solution}</div>`
                  : ''
              }
-
+             <p class="font-italic text-info font-weight-bold fs-6">Question Id: ${id}</p>
            </div>
           
 
