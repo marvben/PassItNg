@@ -12,14 +12,17 @@ body {
   /* Maximum width */
 }
 
-.practicePage {
+.practicePage,
+.quizPage {
 
   height: 100%;
   padding: 80px 20px
 }
 
 .practicePage,
-.practiceForm {
+.quizPage,
+.practiceForm,
+.quizForm {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -27,7 +30,8 @@ body {
 
 }
 
-.practiceForm {
+.practiceForm,
+.quizForm {
   flex-direction: row;
 }
 
@@ -62,21 +66,51 @@ body {
 .hideAnswerButton,
 .yearAvailableWrapper,
 .examTypes,
-.practiceButton {
+.getQuestionButton {
   display: none;
 }
 
 .yearAvailableWrapper.active,
 .examTypes.active,
-.practiceButton.active,
+.getQuestionButton.active,
 .nextQuestionButton.active,
 .showAnswerButton.active,
 .hideAnswerButton.active {
   display: block;
 }
 
-.practiceForm .listOfSubjects select,
-.practiceForm .examTypes,
-.practiceForm .yearsAvailable select {
+form .listOfSubjects select,
+form .listOfSubjects select option,
+form .examTypes,
+form .yearsAvailable select {
   text-transform: capitalize;
+}
+
+/* quizPage */
+.questionWrapper .options label.correctAnswer {
+  color: green;
+  font-weight: bold;
+  position: relative;
+}
+
+.questionWrapper .options label.correctAnswer::after {
+  content: "✔";
+  color: green;
+  margin-left: 8px;
+  font-size: 16px;
+  vertical-align: middle;
+}
+
+.questionWrapper .options label.wrongAnswer {
+  color: red;
+  font-weight: bold;
+  text-decoration: line-through;
+}
+
+.questionWrapper .options label.wrongAnswer::after {
+  content: "✖";
+  color: red;
+  margin-right: 8px;
+  font-size: 16px;
+  vertical-align: middle;
 }

@@ -1,6 +1,7 @@
 // Select the HTML elements
 const practicePage = document.querySelector('.practicePage');
 const practiceForm = document.querySelector('form.practiceForm');
+const quizForm = document.querySelector('form.quizForm');
 const listOfSubjectsElement = document.querySelector('.listOfSubjects');
 const yearAvailableWrapper = document.querySelector('.yearAvailableWrapper');
 const listOfYearsElement = document.querySelector(
@@ -11,7 +12,7 @@ const yearSelected = document.querySelector('.yearsAvailable select');
 const examTypes = document.querySelector('.examTypes');
 const counterDisplay = document.getElementById('counter');
 const questionWrapper = document.querySelector('.questionWrapper');
-const practiceButton = document.querySelector('.practiceButton');
+const getQuestionButton = document.querySelector('.getQuestionButton');
 const nextQuestionButton = document.querySelector('.nextQuestionButton');
 const showAnswerButton = document.querySelector('.showAnswerButton');
 const hideAnswerButton = document.querySelector('.hideAnswerButton');
@@ -20,8 +21,8 @@ document.addEventListener('DOMContentLoaded', async function (e) {
   availableSubject();
 });
 
-showAnswerButton.addEventListener('click', showAnswer);
-hideAnswerButton.addEventListener('click', hideAnswer);
+if (showAnswerButton) showAnswerButton.addEventListener('click', showAnswer);
+if (hideAnswerButton) hideAnswerButton.addEventListener('click', hideAnswer);
 
 function showAnswer() {
   document.querySelector('.answer').classList.remove('d-none');
@@ -89,35 +90,76 @@ examTypes.querySelectorAll('input').forEach((examType) => {
   examType.addEventListener('change', (event) => {
     selectedExamType = event.target.value;
 
-    if (!practiceButton.classList.contains('active')) {
-      practiceButton.classList.add('active');
-      nextQuestionButton.classList.remove('active');
+    if (!getQuestionButton.classList.contains('active')) {
+      getQuestionButton.classList.add('active');
+      if (nextQuestionButton) nextQuestionButton.classList.remove('active');
     }
   });
 });
 
-practiceForm.addEventListener('submit', async (event) => {
-  event.preventDefault();
-  try {
-    await getAQuestion(formFields());
-    practiceButton.classList.remove('active');
-    nextQuestionButton.classList.add('active');
+if (practiceForm) {
+  practiceForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    try {
+      await getAQuestion(formFields());
+      getQuestionButton.classList.remove('active');
+      nextQuestionButton.classList.add('active');
 
-    showAnswerButton.classList.add('active');
-    hideAnswerButton.classList.remove('active');
-  } catch (error) {
-    console.error('Error fetching question:', error);
-  }
+      showAnswerButton.classList.add('active');
+      hideAnswerButton.classList.remove('active');
+    } catch (error) {
+      console.error('Error fetching question:', error);
+    }
 
-  //start timer
-  // startTimer();
-});
+    //start timer
+    // startTimer();
+  });
+}
+
+if (quizForm) {
+  quizForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    try {
+      await getManyQuestions(formFields());
+      getQuestionButton.classList.remove('active');
+    } catch (error) {
+      console.error('Error fetching question:', error);
+    }
+
+    //start timer
+    // startTimer();
+  });
+}
+
+if (questionWrapper) {
+  questionWrapper.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const cards = document.querySelectorAll('.card-body');
+    const results = { correctAnswer: 0, wrongAnswer: 0 };
+
+    cards.forEach((card) => {
+      card.querySelector('.answer').classList.remove('d-none');
+      const selectedOption = card.querySelector('.options input:checked');
+      const correctAnswer = card.querySelector('.answerOption span').innerText;
+
+      if (selectedOption.value === correctAnswer) {
+        selectedOption.nextElementSibling.classList.add('correctAnswer');
+        results.correctAnswer += 1;
+      } else {
+        selectedOption.nextElementSibling.classList.add('wrongAnswer');
+        results.wrongAnswer += 1;
+      }
+    });
+
+    console.log(results);
+  });
+}
 
 function formFields() {
   // Get the selected subject value
   const subjectName = subjectSelected.value;
   const examType = selectedExamType;
-  const numberOfQuestions = 10;
+  const numQuestion = 10;
 
   if (!practicePage) {
     const questionYear = yearSelected.value;
@@ -125,13 +167,13 @@ function formFields() {
       subjectName,
       questionYear,
       examType,
-      numberOfQuestions,
+      numQuestion,
     };
   } else {
     return {
       subjectName,
       examType,
-      numberOfQuestions,
+      numQuestion,
     };
   }
 }
@@ -202,17 +244,28 @@ async function getAQuestion({ subjectName, questionYear, examType }) {
 }
 
 //Getting many questions for quiz
-async function getManyQuestion({ subjectName, questionYear, examType }) {
-  let url = `/practiceQuestion?subject=${subjectName}&year=${questionYear}&type=${examType}`;
+async function getManyQuestions({ subjectName, questionYear, examType }) {
+  let url = `/quizQuestions?subject=${subjectName}&year=${questionYear}&type=${examType}`;
   const response = await axios.get(url);
-  questionWrapper.innerHTML = questionTemplate(response.data);
+
+  response.data.data.forEach((question, idx) => {
+    const questionInner = document.createElement('div');
+    questionInner.classList.add(`question-${idx + 1}`);
+    questionInner.innerHTML = quizQuestionTemplate(question, (idx += 1));
+    questionWrapper.appendChild(questionInner);
+  });
+
+  const submitButtonWrapper = document.createElement('div');
+  submitButtonWrapper.classList.add('submitButtonWrapper');
+  submitButtonWrapper.innerHTML = `<button type="submit" class="btn btn-light btn-outline-dark submitQuizBtn">Submit Quiz</button>`;
+  questionWrapper.appendChild(submitButtonWrapper);
 }
 
 function resetValues() {
-  //yearAvailableWrapper.classList.remove('active');
-  examTypes.classList.remove('active');
-  practiceButton.classList.remove('active');
-  nextQuestionButton.classList.remove('active');
+  if (yearAvailableWrapper) yearAvailableWrapper.classList.remove('active');
+  if (examTypes) examTypes.classList.remove('active');
+  if (getQuestionButton) getQuestionButton.classList.remove('active');
+  if (nextQuestionButton) nextQuestionButton.classList.remove('active');
   questionWrapper.innerHTML = '';
 }
 
@@ -231,8 +284,6 @@ const questionTemplate = (questionObj) => {
     hasPassage,
     category,
   } = questionObj.data;
-
-  console.log(questionObj.data);
 
   return ` 
       <div class="card-body d-flex flex-column justify-content-between align-items-start">
@@ -284,138 +335,121 @@ const questionTemplate = (questionObj) => {
   `;
 };
 
-// const examType = document.querySelector('.examType');
-// const questionsList = document.querySelector('.questionsList');
-// const takepracticeButton = document.querySelector('.takepractice');
-// const fullQuestionsButton = document.querySelector('.fullQuestionsButton');
-// const countryRoot = document.querySelector('.countryRoot');
-// const categoryRoot = document.querySelector('.categoryRoot');
-// const root = document.querySelector('.newsRoot');
-// const loadingSpinner = document.querySelector('.loadingSpinner');
+const quizQuestionTemplate = (questionObj, questionIdx) => {
+  const {
+    id = 0,
+    question,
+    option,
+    section,
+    image,
+    answer,
+    solution,
+    examtype,
+    examyear,
+    questionNub,
+    hasPassage,
+    category,
+  } = questionObj;
 
-// takepracticeButton.addEventListener('click', async () => {
-//   await getpracticeQuestion();
-// });
+  return ` 
+      <div class="card-body d-flex flex-column justify-content-between align-items-start mb-4">
+          <div class="card-title m-2 text-dark question fw-medium fs-5 p-0 mx-0 mb-2">
+            <span class="font-italic questionNumber font-weight-bold text-uppercase fs-6">${questionIdx}). </span>
+            ${question} 
+          </div>
+          <div class="options list-unstyled">
+            ${
+              option.a
+                ? `<div class="optionWrapper">          
+               <input id="${'optionA-' + id}"  type="radio" class="optionB"  
+               name="${'questionID-' + id}"  value="a" required >
+              <label for="${'optionA-' + id}" class="questionOption${option.a}">
+                A. ${option.a}
+              </label></div> `
+                : ''
+            }
 
-// fullQuestionsButton.addEventListener('click', async () => {
-//   await getFullQuestions();
-// });
 
-// async function getpracticeQuestion() {
-//   examType.innerHTML = `<div class="d-flex align-items-center">
-//     <strong>Loading...</strong>
-//     <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
-//   </div>`;
-//   questionsList.innerText = '';
-//   const quote = await axios.get('/motivation');
-//   examType.innerHTML = `<span >${quote.data[0].a}</span>`;
-//   questionsList.innerText = quote.data[0].q;
-// }
+            ${
+              option.b
+                ? `<div class="optionWrapper">          
+               <input id="${'optionB-' + id}"  type="radio" class="optionB"  
+               name="${'questionID-' + id}" value="b"required >
+              <label for="${'optionB-' + id}" class="questionOption${option.b}">
+                B. ${option.b}
+              </label></div> `
+                : ''
+            }
 
-// async function getFullQuestions() {
-//   examType.innerHTML = `<div class="d-flex align-items-center">
-//     <strong>Loading...</strong>
-//     <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
-//   </div>`;
-//   questionsList.innerText = '';
-//   const quote = await axios.get('/motivation');
-//   examType.innerHTML = `<span >${quote.data[0].a}</span>`;
-//   questionsList.innerText = quote.data[0].q;
-// }
 
-// const questionParams = {
-//   questSubject: 'technology',
-//   questYr: 'us',
-// };
+            ${
+              option.c
+                ? `<div class="optionWrapper">          
+               <input  id="${'optionC-' + id}" type="radio" class="optionB"  
+               name="${'questionID-' + id}" value="c" required >
+              <label for="${'optionC-' + id}" class="questionOption${option.c}">
+                C. ${option.c}
+              </label></div> `
+                : ''
+            }
+            
 
-// categoryRoot.addEventListener('change', async (e) => {
-//   questionParams.questSubject = e.target.value;
-//   await getNews(questionParams);
-// });
+            ${
+              option.d
+                ? `<div class="optionWrapper">        
+               <input  id="${'optionD-' + id}" type="radio" class="optionB"  
+               name="${'questionID-' + id}" value="d" required >
+              <label for="${'optionD-' + id}" class="questionOption${option.d}">
+                D. ${option.d}
+              </label></div> `
+                : ''
+            }
 
-// countryRoot.addEventListener('change', async (e) => {
-//   questionParams.countryName = e.target.value;
-//   await getNews(questionParams);
-// });
+            ${
+              option.e
+                ? `<div class="optionWrapper">          
+               <input id="${'optionE-' + id}" type="radio" class="optionB"  
+               name="${'questionID-' + id}" value="e" required >
+              <label for="${'optionE-' + id}" class="questionOption${option.e}">
+                E. ${option.e}
+              </label></div> `
+                : ''
+            }
 
-// const categoryList = () => {
-//   const categoryParams = [
-//     'business',
-//     'entertainment',
-//     'general',
-//     'health',
-//     'science',
-//     'sports',
-//   ];
-//   categoryParams.forEach((category) => {
-//     const option = document.createElement('option');
-//     option.name = category;
-//     option.value = category;
-//     option.innerText = category;
-//     option.classList = 'text-capitalize';
-//     categoryRoot.appendChild(option);
-//   });
-// };
+          </div>
+    
+           ${section ? `<div class="section">${section}</div>` : ''}
 
-// const countryList = () => {
-//   const countryParams = [];
-//   countryParams.forEach((country) => {
-//     const option = document.createElement('option');
-//     option.name = country;
-//     option.value = country;
-//     option.innerText = country;
-//     option.classList = 'text-capitalize';
-//     countryRoot.appendChild(option);
-//   });
-// };
+           ${
+             image
+               ? `<div class="w-100"> <img src="${image}" class="img-fluid" alt="${examtype} ${examyear}"> </div>`
+               : ''
+           }
+           <div class="d-none answer mt-4">
+            <h2 class=" answerOption">Answer: <span>${answer}</span></h2>
+             ${
+               solution
+                 ? `<div class="solution">Solution: ${solution}</div>`
+                 : ''
+             }
 
-// async function getNews({ countryName, questSubject } = {}) {
-//   root.innerHTML = `<p class="text-center">Current API plan only works on local environment. Upgrade to use on development<p>`;
-//   loadingSpinner.classList.add('d-none');
+           </div>
+          
 
-//   //removed news APi calls because I am on free tier.
 
-//   root.innerHTML = ``;
-//   loadingSpinner.classList.remove('d-none');
-//   const news = await axios.get(
-//     `/newsList?country=${countryName}&category=${questSubject}`
-//   );
-//   console.log(news.data);
-//   if (!news.data.articles.length) {
-//     root.innerHTML = `<p class="text-center">Current API plan only works on local environment. Upgrade to use on development<p>`;
-//   } else {
-//     news.data.articles.forEach((questionsArticle) => {
-//       const newContainer = document.createElement('div');
-//       newContainer.classList =
-//         'card col-lg-3 col-md-4 col-12 mb-4 p-0 justify-content-around ';
-//       newContainer.innerHTML = questionTemplate(questionsArticle);
-//       root.appendChild(newContainer);
-//     });
-//   }
-
-//   loadingSpinner.classList.add('d-none');
-// }
-
-// const questionTemplate = (questionsArticle) => {
-//   const { title, description, url, urlToImage, source, author } =
-//     questionsArticle;
-//   return `<a href="${url}" target="_blank" >
-//       <img src="${urlToImage || 'https://picsum.photos/300'}"
-//           class="card-img-top" alt="...">
-//       <div class="card-body d-flex flex-column justify-content-between align-items-start">
-//           <h5 class="card-title m-2 text-dark">
-//               ${title}
-//           </h5>
-//           <p class="card-text m-1 description text-dark">
-//               ${description}
-//           </p>
-//           <a href="${url}" target="_blank" class="btn button btn-lg btn-light m-1 newsSource">From ${
-//     source.name
-//   }</a>
-//           <p class="m-1"><strong>Author:</strong>
-//               ${author || 'Unanimous'}
-//           </p>
-//       </div>
-//   </a>
-//   `;
-// };
+          ${
+            questionNub
+              ? `<div class="questionNub">QuestionNub: ${questionNub}</div>`
+              : ''
+          }
+          ${
+            hasPassage
+              ? `<div class="hasPassage">Has Passage: ${hasPassage}</div>`
+              : ''
+          }
+          ${
+            category ? `<div class="category">Category: ${category}</div>` : ''
+          }     
+      </div>
+  `;
+};

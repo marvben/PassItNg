@@ -26,25 +26,20 @@ router.get('/practiceQuestion', async (req, res) => {
   }
 });
 
-//Exam questions
-router.get('/exam-questions', async (req, res) => {
-  // Get a question
-  // const url = `https://questions.aloc.com.ng/${process.env.ALOC_ACCESS_TOKEN}/v2/q?subject=${req.query.subject}`;
-
-  //   Get many questions (returns 40 questions)
-  // https://questions.aloc.com.ng/api/v2/m?subject=chemistry
-
-  const url = `https://questions.aloc.com.ng/${process.env.ALOC_ACCESS_TOKEN}/v2/q?subject=chemistry&year=2010&type=utme`;
+//Get many practiceQuestion
+router.get('/quizQuestions', async (req, res) => {
+  const url = `https://questions.aloc.com.ng/api/v2/m?subject=${req.query.subject}&type=${req.query.type}&year=${req.query.year}`;
   try {
     const response = await axios.get(url, {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        AccessToken: process.env.ACCESS_TOKEN,
+        AccessToken: process.env.ALOC_ACCESS_TOKEN,
       },
     });
 
     // Sending the data back to the client
+    console.log(response.data);
     res.json(response.data);
   } catch (error) {
     console.error('Error fetching data:', error);
