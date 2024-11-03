@@ -16,6 +16,8 @@ const getQuestionButton = document.querySelector('.getQuestionButton');
 const nextQuestionButton = document.querySelector('.nextQuestionButton');
 const showAnswerButton = document.querySelector('.showAnswerButton');
 const hideAnswerButton = document.querySelector('.hideAnswerButton');
+const loaderSpinner = document.querySelector('.loaderSpinner');
+const loadingText = document.querySelector('.loadingText');
 
 document.addEventListener('DOMContentLoaded', async function (e) {
   availableSubject();
@@ -120,8 +122,8 @@ if (quizForm) {
   quizForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     try {
-      await getManyQuestions(formFields());
       getQuestionButton.classList.remove('active');
+      await getManyQuestions(formFields());
     } catch (error) {
       console.error('Error fetching question:', error);
     }
@@ -238,13 +240,25 @@ async function availableSubject() {
 
 //Getting a single question for practice
 async function getAQuestion({ subjectName, questionYear, examType }) {
+  loaderSpinner.classList.remove('d-none');
+  loadingText.classList.remove('d-none');
+  showAnswerButton.classList.remove('active');
+  questionWrapper.innerHTML = '';
+
   let url = `/practiceQuestion?subject=${subjectName}&type=${examType}`;
   const response = await axios.get(url);
   questionWrapper.innerHTML = questionTemplate(response.data);
+
+  showAnswerButton.classList.add('active');
+  loaderSpinner.classList.add('d-none');
+  loadingText.classList.add('d-none');
 }
 
 //Getting many questions for quiz
 async function getManyQuestions({ subjectName, questionYear, examType }) {
+  loaderSpinner.classList.remove('d-none');
+  loadingText.classList.remove('d-none');
+
   let url = `/quizQuestions?subject=${subjectName}&year=${questionYear}&type=${examType}`;
   const response = await axios.get(url);
 
@@ -259,6 +273,9 @@ async function getManyQuestions({ subjectName, questionYear, examType }) {
   submitButtonWrapper.classList.add('submitButtonWrapper');
   submitButtonWrapper.innerHTML = `<button type="submit" class="btn btn-light btn-outline-dark submitQuizBtn">Submit Quiz</button>`;
   questionWrapper.appendChild(submitButtonWrapper);
+
+  loaderSpinner.classList.add('d-none');
+  loadingText.classList.add('d-none');
 }
 
 function resetValues() {
@@ -337,7 +354,7 @@ const questionTemplate = (questionObj) => {
 
 const quizQuestionTemplate = (questionObj, questionIdx) => {
   const {
-    id = 0,
+    id,
     question,
     option,
     section,
@@ -426,13 +443,13 @@ const quizQuestionTemplate = (questionObj, questionIdx) => {
                : ''
            }
            <div class="d-none answer mt-4">
-            <h2 class=" answerOption">Answer: <span>${answer}</span></h2>
+            <h2 class=" answerOption">Answer: <span>${answer}</span> </h2>
              ${
                solution
                  ? `<div class="solution">Solution: ${solution}</div>`
                  : ''
              }
-
+              <p class="font-italic text-info font-weight-bold fs-6">Question Id: ${id}</p>
            </div>
           
 
