@@ -86,12 +86,20 @@ form .yearsAvailable select {
   text-transform: capitalize;
 }
 
+
 /* quizPage */
+
+.optionWrapper {
+  display: flex;
+  gap: 10px;
+}
+
 .questionWrapper .options label.correctAnswer {
   color: green;
   font-weight: bold;
   position: relative;
 }
+
 
 .questionWrapper .options label.correctAnswer::after {
   content: "✔";

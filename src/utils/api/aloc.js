@@ -39,7 +39,6 @@ router.get('/quizQuestions', async (req, res) => {
     });
 
     // Sending the data back to the client
-    console.log(response.data);
     res.json(response.data);
   } catch (error) {
     console.error('Error fetching data:', error);
